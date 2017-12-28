@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.ProductShelfDao">
+    <resultMap id="productShelfBaseMap" type="ProductShelf">
+        <id column="psf_id" property="id"></id>
+        <result column="PRODUCT_ID" property="productId"></result>
+        <result column="OPER_TIME" property="operTime"></result>
+        <result column="SHELF_CREATE_TIME" property="shelfCreateTime"></result>
+        <result column="IS_UP_SHELF" property="isUpShelf" jdbcType="CHAR" javaType="Integer"></result>
+    </resultMap>
+    <sql id="selectProductShelf">
+        SELECT ID PSF_ID,
+        PRODUCT_ID,
+        OPER_TIME,
+        SHELF_CREATE_TIME,
+        IS_UP_SHELF
+        FROM XIAOHUANG.PRODUCT_SHELF
+    </sql>
+
+    <select id="query" parameterType="ProductShelf" resultMap="productShelfBaseMap">
+        <include refid="selectProductShelf"></include>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    AND ID=#{id}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+
+        </where>
+    </select>
+    <sql id="insertProductShelf">
+
+        INSERT INTO XIAOHUANG.PRODUCT_SHELF
+    </sql>
+    <insert id="add" parameterType="ProductShelf">
+        <selectKey keyProperty="id" order="BEFORE" resultType="Long">
+            <include refid="com.iotek.dao.BaseDao.createPrimaryKey"></include>
+        </selectKey>
+
+        <include refid="insertProductShelf"></include>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                ID,
+            </if>
+            <if test="productId!=null">
+                PRODUCT_ID,
+            </if>
+            <if test="operTime!=null">
+                OPER_TIME,
+            </if>
+            <if test="isUpShelf!=null">
+                IS_UP_SHELF,
+            </if>
+            <if test="shelfCreateTime!=null">
+                SHELF_CREATE_TIME,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="productId!=null">
+                #{productId},
+            </if>
+            <if test="operTime!=null">
+                #{operTime},
+            </if>
+            <if test="isUpShelf!=null">
+                #{isUpShelf},
+            </if>
+            <if test="shelfCreateTime!=null">
+                #{shelfCreateTime},
+            </if>
+        </trim>
+    </insert>
+    <sql id="updateProductShelf">
+        UPDATE XIAOHUANG.PRODUCT_SHELF
+    </sql>
+    <update id="update" parameterType="ProductShelf">
+        <include refid="updateProductShelf"></include>
+        <set>
+            <if test="id!=null">
+                ID=#{id},
+            </if>
+            <if test="productId!=null">
+                PRODUCT_ID=#{productId},
+            </if>
+            <if test="operTime!=null">
+                OPER_TIME=#{operTime},
+            </if>
+            <if test="isUpShelf!=null">
+                IS_UP_SHELF=#{isUpShelf},
+            </if>
+            <if test="shelfCreateTime!=null">
+                SHELF_CREATE_TIME=#{shelfCreateTime},
+            </if>
+        </set>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    AND ID=#{id}
+                </when>
+                <when test="productId!=null">
+                    AND PRODUCT_ID=#{productId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </update>
+
+
+    <select id="queryProductShelfByPid" resultMap="productShelfBaseMap">
+        <include refid="selectProductShelf"></include>
+        <where>
+            <choose>
+                <when test="productId!=null">
+                    AND PRODUCT_ID=#{productId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+
+</mapper>

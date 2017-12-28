@@ -1,3 +1,5 @@
+package com.iotek.po;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 

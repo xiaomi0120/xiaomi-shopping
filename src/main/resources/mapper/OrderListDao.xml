@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.OrderListDao">
+    <resultMap id="orderListBaseMap" type="OrderList">
+        <id column="ol_id" property="id"></id>
+        <result column="TOTAL_MONEY" property="totalMoney"></result>
+        <result column="ORDER_STATE" property="orderState"></result>
+        <result column="ORDER_CREATE_TIME" property="orderCreateTime"></result>
+        <result column="IS_PAY" property="isPay"></result>
+        <collection property="orderItemList" column="{orderListId=ol_id}" ofType="OrderItem"
+                    select="com.iotek.dao.OrderItemDao.queryOrderItemByOLID"></collection>
+
+    </resultMap>
+    <sql id="selectOrderList">
+        SELECT ID ol_id,
+        TOTAL_MONEY,
+        ORDER_STATE,
+        ORDER_CREATE_TIME,
+        IS_PAY
+        FROM ORDER_LIST
+    </sql>
+
+    <select id="query" parameterType="OrderList" resultMap="orderListBaseMap">
+        <include refid="selectOrderList"></include>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    AND ID=#{id}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <select id="queryOrderListByCID" parameterType="OrderList" resultMap="orderListBaseMap">
+        <include refid="selectOrderList"></include>
+        <where>
+            <choose>
+                <when test="customerId!=null">
+                    AND CUSTOMER_ID=#{customerId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+
+</mapper>

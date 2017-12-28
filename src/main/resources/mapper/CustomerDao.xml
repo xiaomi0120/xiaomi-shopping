@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.CustomerDao">
+
+    <resultMap id="customerBaseMap" type="Customer">
+        <id column="c_id" property="id" javaType="Long"></id>
+        <result column="CUSTOMER_NAME" property="customerName" javaType="String"></result>
+        <result column="CUSTOMER_PASSWORD" property="customerPassword"></result>
+        <result column="CUSTOMER_EMAIL" property="customerEmail"></result>
+        <result column="CUSTOMER_PHONE" property="customerPhone"></result>
+        <result column="CUSTOMER_MONEY" property="customerMoney"></result>
+        <result column="CUSTOMER_CREATE_TIME" property="customerCreateTime"></result>
+        <result column="IS_NORMAL" property="isNormal"></result>
+        <collection property="addressList" ofType="Address" column="{customerId=C_ID}"
+                    select="queryAddressByCId"></collection>
+        <collection property="orderLists" ofType="OrderList" column="{customerId=C_ID}"
+                    select="com.iotek.dao.OrderListDao.queryOrderListByCID"></collection>
+
+    </resultMap>
+
+    <sql id="selectCustomerSql">
+        SELECT ID c_id,
+        CUSTOMER_NAME,
+        CUSTOMER_PASSWORD,
+        CUSTOMER_EMAIL,
+        CUSTOMER_PHONE,
+        CUSTOMER_MONEY,
+        CUSTOMER_CREATE_TIME,
+        IS_NORMAL
+        FROM XIAOHUANG.CUSTOMER
+    </sql>
+    <select id="query" resultMap="customerBaseMap">
+        <include refid="selectCustomerSql"></include>
+        <where>
+            <choose>
+                <when test="customerName!=null and  customerPassword!=null">
+                    AND CUSTOMER_NAME=#{customerName} AND CUSTOMER_PASSWORD=#{customerPassword}
+                </when>
+                <when test="id!=null">
+                    AND ID=#{id}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <insert id="add" parameterType="Customer">
+        <selectKey keyProperty="id" order="BEFORE" resultType="Long">
+            <include refid="com.iotek.dao.BaseDao.createPrimaryKey"></include>
+        </selectKey>
+        INSERT INTO XIAOHUANG.CUSTOMER
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                ID,
+            </if>
+            <if test="customerName!=null">
+                CUSTOMER_NAME,
+            </if>
+            <if test="customerPassword!=null">
+                CUSTOMER_PASSWORD,
+            </if>
+            <if test="customerPhone!=null">
+                CUSTOMER_PHONE,
+            </if>
+            <if test="customerEmail!=null">
+                CUSTOMER_EMAIL,
+            </if>
+            <if test="customerMoney!=null">
+                CUSTOMER_MONEY,
+            </if>
+            <if test="customerCreateTime!=null">
+                CUSTOMER_CREATE_TIME,
+            </if>
+            <if test="isNormal!=null">
+                IS_NORMAL,
+            </if>
+        </trim>
+
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="customerName!=null">
+                #{customerName},
+            </if>
+            <if test="customerPassword!=null">
+                #{customerPassword},
+            </if>
+            <if test="customerPhone!=null">
+                #{customerPhone},
+            </if>
+            <if test="customerEmail!=null">
+                #{customerEmail},
+            </if>
+            <if test="customerMoney!=null">
+                #{customerMoney},
+            </if>
+            <if test="customerCreateTime!=null">
+                #{customerCreateTime},
+            </if>
+            <if test="isNormal!=null">
+                #{isNormal},
+            </if>
+        </trim>
+    </insert>
+
+    <resultMap id="addressBaseMap" type="Address">
+        <id column="a_id" property="id"></id>
+        <result column="PROVINCE" property="province"></result>
+        <result column="CUSTOMER_ID" property="customerId"></result>
+        <result column="CITY" property="city"></result>
+        <result column="COUNTRY" property="country"></result>
+        <result column="ROAD" property="road"></result>
+        <result column="ADDRESS_CREATE_TIME" property="addressCreateTime"></result>
+    </resultMap>
+
+    <select id="queryAddressByCId" resultMap="addressBaseMap" parameterType="Address">
+        SELECT ID a_id FROM Address WHERE CUSTOMER_ID=#{customerId}
+    </select>
+
+
+    <!--<select id="queryCustomerAddress" resultMap="customerAddressMap">
+         SELECT C.ID  c_id,
+        C.CUSTOMER_NAME,
+        C.CUSTOMER_PASSWORD,
+        C.CUSTOMER_EMAIL,
+        C.CUSTOMER_PHONE,
+        C.CUSTOMER_MONEY,
+        C.CUSTOMER_CREATE_TIME,
+        C.IS_NORMAL ,
+        A.ID a_id,
+        a.PROVINCE ,
+        a.CUSTOMER_ID,
+        a.CITY,
+        a.COUNTRY,
+        a.ROAD,
+        a.ADDRESS_CREATE_TIME
+        FROM   XIAOHUANG.CUSTOMER  C  ,
+        XIAOHUANG.ADDRESS  A
+        <where>
+            AND  A.CUSTOMER_ID =C.ID
+        </where>
+    </select>
+-->
+    <update id="update" parameterType="Customer">
+        UPDATE CUSTOMER
+        <set>
+            <if test="id!=null">
+                ID=#{id},
+            </if>
+            <if test="customerName!=null">
+                CUSTOMER_NAME= #{customerName},
+            </if>
+            <if test="customerPassword!=null">
+                CUSTOMER_PASSWORD= #{customerPassword},
+            </if>
+            <if test="customerPhone!=null">
+                CUSTOMER_PHONE= #{customerPhone},
+            </if>
+            <if test="customerEmail!=null">
+                CUSTOMER_EMAIL= #{customerEmail},
+            </if>
+            <if test="customerMoney!=null">
+                CUSTOMER_MONEY =#{customerMoney},
+            </if>
+            <if test="customerCreateTime!=null">
+                CUSTOMER_CREATE_TIME= #{customerCreateTime},
+            </if>
+            <if test="isNormal!=null">
+                IS_NORMAL= #{isNormal},
+            </if>
+        </set>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    AND ID=#{id}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+
+            </choose>
+
+        </where>
+    </update>
+
+
+</mapper>

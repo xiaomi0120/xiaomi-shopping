@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.ProductDao">
+    <resultMap id="productBaseMap" type="Product">
+        <id column="p_id" property="id"></id>
+        <result column="PRODUCT_NAME" property="productName"></result>
+        <result column="PRODUCT_TYPE" property="productType"></result>
+        <result column="PRODUCT_PRICE" property="productPrice"></result>
+        <result column="PRODUCT_CREATE_TIME" property="productCreateTime"></result>
+
+        <association property="productDetail" column="{productId=P_ID}" javaType="ProductDetail"
+                     select="com.iotek.dao.ProductDetailDao.queryProductDetailByPid"></association>
+        <association property="productShelf" column="{productId=P_ID}"
+                     select="com.iotek.dao.ProductShelfDao.queryProductShelfByPid"></association>
+        <association property="productStock" column="{productId=P_ID}"
+                     select="com.iotek.dao.ProductStockDao.queryProductStockByPid"></association>
+    </resultMap>
+    <sql id="insertProduct">
+        INSERT INTO XIAOHUANG.PRODUCT
+
+    </sql>
+    <insert id="add" parameterType="Product">
+        <selectKey keyProperty="id" order="BEFORE" resultType="Long">
+            <include refid="com.iotek.dao.BaseDao.createPrimaryKey"></include>
+        </selectKey>
+        <include refid="insertProduct"></include>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                ID,
+            </if>
+            <if test="productName!=null">
+                PRODUCT_NAME,
+            </if>
+            <if test="productType!=null">
+                PRODUCT_TYPE,
+            </if>
+            <if test="productPrice!=null">
+                PRODUCT_PRICE,
+            </if>
+            <if test="productCreateTime!=null">
+                PRODUCT_CREATE_TIME,
+            </if>
+
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="productName!=null">
+                #{productName},
+            </if>
+            <if test="productType!=null">
+                #{productType},
+            </if>
+            <if test="productPrice!=null">
+                #{productPrice},
+            </if>
+            <if test="productCreateTime!=null">
+                #{productCreateTime},
+            </if>
+
+        </trim>
+    </insert>
+
+    <sql id="selectProduct">
+        SELECT ID P_ID,PRODUCT_NAME,PRODUCT_TYPE,PRODUCT_PRICE,PRODUCT_CREATE_TIME FROM XIAOHUANG.PRODUCT
+    </sql>
+
+
+    <select id="query" parameterType="Product" resultMap="productBaseMap">
+        <include refid="selectProduct"></include>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    AND ID =#{id}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+
+    </select>
+
+    <select id="queryAll" resultMap="productBaseMap">
+        <include refid="selectProduct"></include>
+    </select>
+
+
+</mapper>

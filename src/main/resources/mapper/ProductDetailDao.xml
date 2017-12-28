@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.ProductDetailDao">
+    <resultMap id="productDetailBaseMap" type="ProductDetail">
+        <id column="pd_id" property="id"></id>
+        <result column="PRODUCT_ID" property="productId"></result>
+        <result column="SMALL_IMAGE" property="smallImage"></result>
+        <result column="BIG_IMAGE" property="bigImage"></result>
+        <result column="PRODUCT_CAPTION" property="productCaption"></result>
+
+    </resultMap>
+    <sql id="insertProductDetail">
+        INSERT INTO XIAOHUANG.PRODUCT_DETAIL
+    </sql>
+    <sql id="selectProductDetail">
+        SELECT ID PD_ID,PRODUCT_ID,SMALL_IMAGE ,BIG_IMAGE,PRODUCT_CAPTION FROM XIAOHUANG.PRODUCT_DETAIL
+    </sql>
+
+    <select id="queryProductDetailByPid" resultMap="productDetailBaseMap" parameterType="ProductDetail">
+        <include refid="selectProductDetail"></include>
+        <where>
+            <choose>
+                <when test="productId!=null">
+                    AND PRODUCT_ID=#{productId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <insert id="add" parameterType="ProductDetail">
+        <selectKey keyProperty="id" order="BEFORE" resultType="Long">
+            <include refid="com.iotek.dao.BaseDao.createPrimaryKey"></include>
+        </selectKey>
+        <include refid="insertProductDetail"></include>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                ID,
+            </if>
+            <if test="productCaption!=null">
+                PRODUCT_CAPTION,
+            </if>
+            <if test="smallImage!=null">
+                SMALL_IMAGE,
+            </if>
+            <if test="bigImage!=null">
+                BIG_IMAGE,
+            </if>
+            <if test="productId!=null">
+                PRODUCT_ID
+            </if>
+
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="productCaption!=null">
+                #{productCaption},
+            </if>
+            <if test="smallImage!=null">
+                #{smallImage},
+            </if>
+            <if test="bigImage!=null">
+                #{bigImage},
+            </if>
+            <if test="productId!=null">
+                #{productId}
+            </if>
+        </trim>
+    </insert>
+</mapper>

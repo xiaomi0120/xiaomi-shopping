@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.OrderItemDao">
+    <resultMap id="orderItemBaseMap" type="OrderItem">
+        <id column="oi_id" property="id"></id>
+        <result column="ITEM_NO" property="itemNO"></result>
+        <result column="ORDER_LIST_ID" property="orderListId"></result>
+        <result column="PRODUCT_ID" property="productId"></result>
+        <result column="PRODUCT_NUMBER" property="productNumber"></result>
+        <result column="IS_SEND_OUT" property="isSendOut"></result>
+        <result column="ADDRESS_ID" property="addressId"></result>
+        <result column="ORDER_ITEM_STATE" property="orderItemState"></result>
+        <association property="product" column="{id=product_id}" javaType="Product"
+                     select="com.iotek.dao.ProductDao.query"></association>
+
+    </resultMap>
+    <sql id="selectOrderItem">
+        SELECT
+        ID oi_id,
+        ITEM_NO,
+        ORDER_LIST_ID,
+        PRODUCT_ID,
+        PRODUCT_NUMBER,
+        IS_SEND_OUT,
+        ADDRESS_ID,
+        ORDER_ITEM_STATE
+        FROM XIAOHUANG.ORDER_ITEM
+
+    </sql>
+
+    <select id="queryOrderItemByOLID" parameterType="OrderItem" resultMap="orderItemBaseMap">
+        <include refid="selectOrderItem"></include>
+        <where>
+            <choose>
+                <when test="orderListId!=null">
+                    AND ORDER_LIST_ID=#{orderListId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+
+</mapper>
